@@ -2,8 +2,20 @@ from typing import Union
 import requests
 from fastapi import FastAPI
 import time
-app = FastAPI()
+from fastapi.middleware.cors import CORSMiddleware
 
+app = FastAPI()
+origins = [
+    "*"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def read_root():
@@ -21,6 +33,5 @@ def read_item(market: str,days:int):
     binance_url = binance_main_url+ '/api/v3/klines?symbol='+market+'&interval=1d&startTime='+str(binance_start_time)+'&endTime='+str(binance_end_time)+'&limit=1000'
     response = requests.get(binance_url)
     response = response.json()
-    print(response)
     print(len(response))
     return response
